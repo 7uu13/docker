@@ -48,3 +48,20 @@ services:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/host/root:ro
+
+networks: {} 
+
+volumes:
+  prometheus_data:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=<NFS_SERVER_IP>,rw
+      device: ":/mnt/data/prometheus"
+
+  grafana_data:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=<NFS_SERVER_IP>,rw
+      device: ":/mnt/data/grafana"
