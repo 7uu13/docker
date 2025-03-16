@@ -5,3 +5,4 @@ services:
     restart: unless-stopped
     ports:
       - "6080:8080"
+      - "6443:8443"
