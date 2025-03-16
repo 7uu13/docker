@@ -2,7 +2,7 @@ services:
   nginx:
     image: nginx:latest
     container_name: nginx-test-1
-    restart: unless-stopped
+    restart: always
     ports:
       - "6080:8080"
       - "5443:8443"
