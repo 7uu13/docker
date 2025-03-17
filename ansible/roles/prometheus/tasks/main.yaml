@@ -31,3 +31,20 @@
     volumes:
       - /etc/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
   register: _prometheus_container
+
+- name: Create node_exporter container
+  community.docker.docker_container:
+    name: node_exporter
+    image: prom/node-exporter:latest
+    user: root
+    published_ports:
+      - "9100:9100"
+    restart_policy: always
+    state: started
+    networks:
+      - name: monitoring
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/host/root:ro
+  register: _node_exporter_container
