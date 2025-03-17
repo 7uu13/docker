@@ -1,0 +1,33 @@
+---
+- name: Create prometheus directory
+  ansible.builtin.file:
+    path: /etc/prometheus
+    state: directory
+
+- name: Add prometheus configuration file
+  ansible.builtin.template:
+    src: prometheus.yaml.j2
+    force: true
+    dest: /etc/prometheus/prometheus.yaml
+  register: prometheus_configuration
+
+- name: Create docker network
+  community.docker.docker_network:
+    name: monitoring
+    state: present
+
+- name: Create prometheus container
+  community.docker.docker_container:
+    name: prometheus
+    image: prom/prometheus
+    user: root
+    published_ports:
+      - "9090:9090"
+    restart_policy: always
+    recreate: "{{ prometheus_configuration.changed }}"
+    state: started
+    networks:
+      - name: monitoring
+    volumes:
+      - /etc/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+  register: _prometheus_container

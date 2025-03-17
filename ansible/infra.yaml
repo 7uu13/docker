@@ -1,0 +1,4 @@
+- name: Install 'prometheus'
+  hosts: docker_host
+  roles:
+    - prometheus
