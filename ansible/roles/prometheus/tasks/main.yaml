@@ -6,9 +6,9 @@
 
 - name: Add prometheus configuration file
   ansible.builtin.template:
-    src: prometheus.yaml.j2
+    src: prometheus.yml.j2
     force: true
-    dest: /etc/prometheus/prometheus.yaml
+    dest: /etc/prometheus/prometheus.yml
   register: prometheus_configuration
 
 - name: Create docker network
@@ -29,7 +29,7 @@
     networks:
       - name: monitoring
     volumes:
-      - /etc/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+      - /etc/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
   register: _prometheus_container
 
 - name: Create node_exporter container
@@ -48,3 +48,21 @@
       - /sys:/host/sys:ro
       - /:/host/root:ro
   register: _node_exporter_container
+
+- name: Create cadvisor container
+  community.docker.docker_container:
+    name: cadvisor
+    image: gcr.io/cadvisor/cadvisor
+    user: root
+    published_ports:
+      - "5080:8080"
+    restart_policy: always
+    state: started
+    networks:
+      - name: monitoring
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+  register: _cadvisor_container
