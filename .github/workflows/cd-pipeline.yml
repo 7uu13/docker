@@ -36,4 +36,5 @@ jobs:
           ANSIBLE_BECOME_PASSWORD: ${{ secrets.BECOME_PASS }}
           ANSIBLE_CONFIG: ${{ github.workspace }}/ansible/ansible.cfg
         run: |
-          ansible-playbook ansible/infra.yaml
+          ansible-playbook ansible/infra.yaml -e "ansible_become_password=${{ BECOME_PASS }}"
+
