@@ -16,7 +16,7 @@ jobs:
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
 
-      - test bs
+      - name: test bs
         run: |
           ssh -o "StrictHostKeyChecking no" tuunikala@prod-docker-host "
             cd /home/tuunikala
