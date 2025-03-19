@@ -19,7 +19,7 @@ jobs:
       - name: test bs
         run: |
           mkdir ~/.ssh
-          echo "{{ secrets.SSH_PRIV_KEY }}" >> ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIV_KEY }}" >> ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh -o "StrictHostKeyChecking no" -i ~/.ssh/id_rsa tuunikala@prod-docker-host "
             touch test.txt
