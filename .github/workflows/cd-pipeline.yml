@@ -30,5 +30,6 @@ jobs:
       - name: Run playbook
         env:
           ANSIBLE_BECOME_PASSWORD: ${{ secrets.BECOME_PASS }}
+          ANSIBLE_CONFIG: ${{ github.workspace }}/ansible/ansible.cfg
         run: |
           ansible-playbook ansible/infra.yaml
