@@ -27,6 +27,10 @@ jobs:
         env:
           SSH_PRIV_KEY: ${{ secrets.SSH_PRIV_KEY }}
 
+      - name: Add prod-docker-host to known hosts
+        run: |
+          ssh-keyscan -H prod-docker-host >> ~/.ssh/known_hosts
+
       - name: Run playbook
         env:
           ANSIBLE_BECOME_PASSWORD: ${{ secrets.BECOME_PASS }}
