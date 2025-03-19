@@ -9,6 +9,9 @@ jobs:
   deploy-via-tailscale:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       - name: Connect to Tailscale
         uses: tailscale/github-action@v3
         with:
@@ -16,11 +19,16 @@ jobs:
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
 
-      - name: test bs
+      - name: Set up SSH key
         run: |
           mkdir ~/.ssh
           echo "${{ secrets.SSH_PRIV_KEY }}" >> ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh -o "StrictHostKeyChecking no" -i ~/.ssh/id_rsa tuunikala@prod-docker-host "
-            touch test.txt
-          "
+        env:
+          SSH_PRIV_KEY: ${{ secrets.SSH_PRIV_KEY }}
+
+      - name: Run playbook
+        env:
+          ANSIBLE_BECOME_PASSWORD: ${{ secrets.BECOME_PASS }}
+        run: |
+          ansible-playbook ansible/infra.yaml

@@ -7,7 +7,6 @@
 - name: Add prometheus configuration file
   ansible.builtin.template:
     src: prometheus.yml.j2
-    force: true
     dest: /etc/prometheus/prometheus.yml
   register: prometheus_configuration
 

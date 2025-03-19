@@ -2,3 +2,12 @@
   hosts: docker_host
   roles:
     - prometheus
+  tags:
+    - prometheus
+
+- name: Install 'grafana'
+  hosts: docker_host
+  roles:
+    - grafana
+  tags:
+    - grafana

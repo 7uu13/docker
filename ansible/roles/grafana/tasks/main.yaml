@@ -1,0 +1,47 @@
+---
+- name: Create Grafana directory
+  ansible.builtin.file:
+    path: "/opt/grafana/provisioning/{{ item }}"
+    state: directory
+  loop:
+    - dashboards
+    - datasources
+
+- name: Add grafana.ini
+  ansible.builtin.template:
+    src: grafana.ini.j2
+    dest: /opt/grafana/grafana.ini
+  register: grafana_configuration
+
+- name: Add default dashboard and datasources
+  ansible.builtin.template:
+    src: "{{ item }}.yaml.j2"
+    dest: "/opt/grafana/provisioning/{{ item }}/default.yaml"
+  loop:
+    - datasources
+    - dashboards
+  register: grafana_data_configuration
+
+- name: Add dashboards
+  ansible.builtin.copy:
+    src: dashboard.json
+    dest: /opt/grafana/provisioning/dashboards/dashboard.json
+  register: grafana_dashboards
+
+- name: Create Grafana Container
+  community.docker.docker_container:
+    name: grafana
+    image: grafana/grafana
+    user: root
+    published_ports:
+      - "3000:3000"
+    restart_policy: always
+    state: started
+    networks:
+      - name: monitoring
+    container_default_behavior: no_defaults
+    recreate: >-
+      {{ grafana_configuration.changed or
+         grafana_data_configuration.changed or
+         grafana_dashboards.changed }}
+    volumes: /opt/grafana:/etc/grafana
